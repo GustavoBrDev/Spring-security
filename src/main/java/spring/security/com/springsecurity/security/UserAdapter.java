@@ -1,0 +1,34 @@
+package spring.security.com.springsecurity.security;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import spring.security.com.springsecurity.models.Usuario;
+
+import java.util.Collection;
+import java.util.List;
+
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
+public class UserAdapter implements UserDetails {
+
+    private Usuario usuario;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.usuario.getSenha();
+    }
+
+    @Override
+    public String getUsername() {
+        return this.usuario.getUsuario();
+    }
+}
