@@ -5,7 +5,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import spring.security.com.springsecurity.models.entity.Usuario;
+import spring.security.com.springsecurity.models.entity.UsuarioCompleto;
+import spring.security.com.springsecurity.repositories.UsuarioCompletoRepository;
 import spring.security.com.springsecurity.repositories.UsuarioRepository;
+import spring.security.com.springsecurity.security.UserAdapter;
 
 @Service
 @AllArgsConstructor
@@ -15,6 +19,6 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findByUsuario( username ).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+       return repository.findByAutenticacao_Username(username).get().getAutenticacao();
     }
 }

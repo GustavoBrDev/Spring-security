@@ -1,0 +1,28 @@
+package spring.security.com.springsecurity.security.models.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import spring.security.com.springsecurity.models.entity.Usuario;
+
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
+@Entity
+public class UsuarioAutenticacao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String password;
+    private String username;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
+
+    @OneToOne(mappedBy = "autenticacao")
+    private Usuario usuario;
+}

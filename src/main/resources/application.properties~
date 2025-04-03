@@ -4,5 +4,6 @@ spring.datasource.username=root
 spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
 server.port=7070
-
+spring.security.user.name=admin
+spring.security.user.password=admin
 

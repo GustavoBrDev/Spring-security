@@ -1,0 +1,2 @@
+package spring.security.com.springsecurity.repositories;public interface UsuarioCompletoRepository {
+}

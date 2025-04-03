@@ -24,11 +24,11 @@ public class UserAdapter implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "";
+        return this.usuario.getSenha();
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return this.usuario.getUsuario();
     }
 }
