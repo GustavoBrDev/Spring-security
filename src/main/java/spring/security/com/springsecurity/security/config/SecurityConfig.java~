@@ -61,7 +61,6 @@ public class SecurityConfig {
                     authorize.requestMatchers( HttpMethod.POST, "api/auth/login", "api/auth/logout").permitAll()
                             .anyRequest().authenticated();
                 })
-                .logout(config -> config.disable())
                 .build();
     }
 

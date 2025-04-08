@@ -1,19 +1,21 @@
 package spring.security.com.springsecurity.security.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spring.security.com.springsecurity.security.models.dto.LoginRequest;
+import spring.security.com.springsecurity.security.utils.JWTUtils;
 
 @RestController
 @AllArgsConstructor
@@ -22,6 +24,7 @@ public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
     private SecurityContextRepository securityContextRepository;
+    private final JWTUtils jwtUtils = new JWTUtils();
 
     @PostMapping("/login")
     public void login( @RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -31,10 +34,20 @@ public class AuthenticationController {
 
         if (auth.isAuthenticated()) {
 
+            /*
+
+            Mantem a sessão salva no servidor
+
             SecurityContext context = SecurityContextHolder.getContext();
             context.setAuthentication(auth);
-            securityContextRepository.saveContext(context, request, response);
+            securityContextRepository.saveContext(context, request, response);*/
 
+            // Uso do JWT
+            response.addCookie( new Cookie( "JWTSESSION", jwtUtils.generateToken( (UserDetails) auth.getPrincipal() ) ) );
+            response.setStatus(200);
+
+        } else {
+            response.setStatus(403);
         }
     }
 

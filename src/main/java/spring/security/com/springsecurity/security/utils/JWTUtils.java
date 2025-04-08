@@ -1,0 +1,52 @@
+package spring.security.com.springsecurity.security.utils;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+
+public class JWTUtils {
+
+    private final String PASSWORD = "SenhaSegur4!";
+
+    public String generateToken(UserDetails userDetails) {
+        Algorithm algorithm = Algorithm.HMAC256(PASSWORD);
+        return JWT.create()
+                .withIssuer("TOKEN") // Emissor do token
+                .withIssuedAt( creationInstant() ) // Data de emissão
+                .withExpiresAt( expirationInstant() ) // Data de expiração
+                .withSubject(userDetails.getUsername())
+                .sign(algorithm)
+                ;
+    }
+
+    public Instant expirationInstant() {
+
+        return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).plusMinutes(30).toInstant();
+    }
+
+    private Instant creationInstant ( ){
+
+        return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant();
+    }
+
+    public void validateToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(PASSWORD);
+        DecodedJWT decodedJWT = JWT.decode(token);
+        algorithm.verify(decodedJWT);
+
+        if (decodedJWT.getExpiresAt().toInstant().isBefore( creationInstant()) ) {
+            throw new TokenExpiredException("Token expirado", decodedJWT.getExpiresAt().toInstant());
+        }
+    }
+
+    public String getUsernameFromToken(String token) {
+        return JWT.decode(token).getSubject();
+    }
+}
