@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
 
 public class JWTUtils {
 
@@ -17,15 +19,21 @@ public class JWTUtils {
 
     public String generateToken(UserDetails userDetails) {
         Algorithm algorithm = Algorithm.HMAC256(PASSWORD);
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        System.out.println(roles);
+
         return JWT.create()
                 .withIssuer("TOKEN") // Emissor do token
-                .withIssuedAt( creationInstant() ) // Data de emissão
-                .withExpiresAt( expirationInstant() ) // Data de expiração
+                .withIssuedAt(creationInstant()) // Data de emissão
+                .withExpiresAt(expirationInstant()) // Data de expiração
                 .withSubject(userDetails.getUsername())
-                .sign(algorithm)
-                ;
+                .withClaim("roles", roles) // Adicionando os roles
+                .sign(algorithm);
     }
-
     public Instant expirationInstant() {
 
         return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).plusMinutes(30).toInstant();

@@ -5,10 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import spring.security.com.springsecurity.models.entity.Usuario;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Data
@@ -22,6 +25,8 @@ public class UsuarioAutenticacao implements UserDetails {
 
     private String password;
     private String username;
+    @ManyToMany
+    private List<Roles> roles;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
@@ -32,6 +37,9 @@ public class UsuarioAutenticacao implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .collect(Collectors.toList());
     }
 }
